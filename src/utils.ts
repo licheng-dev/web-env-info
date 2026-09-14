@@ -1,17 +1,13 @@
-import { execSync } from 'child_process'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import type { EnvInfoOptions } from './types'
 
-export function getGitBranch(root: string): string | null {
+function readPackageJson(root: string): Record<string, unknown> {
   try {
-    return execSync('git rev-parse --abbrev-ref HEAD', {
-      cwd: root,
-      encoding: 'utf-8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-    }).trim()
+    const pkgPath = join(root, 'package.json')
+    return JSON.parse(readFileSync(pkgPath, 'utf-8'))
   } catch {
-    return null
+    return {}
   }
 }
 
@@ -19,13 +15,16 @@ export function getProjectName(root: string, options: EnvInfoOptions): string {
   if (options.projectName) {
     return options.projectName
   }
-  try {
-    const pkgPath = join(root, 'package.json')
-    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'))
-    return pkg.name || 'unknown'
-  } catch {
-    return 'unknown'
+  const pkg = readPackageJson(root)
+  return (pkg.name as string) || 'unknown'
+}
+
+export function getProjectVersion(root: string, options: EnvInfoOptions): string {
+  if (options.version) {
+    return options.version
   }
+  const pkg = readPackageJson(root)
+  return (pkg.version as string) || 'unknown'
 }
 
 export function getBuildEnv(options: EnvInfoOptions, mode: string): string {

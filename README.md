@@ -1,12 +1,11 @@
 # @li-labs/vite-plugin-env-info
 
-在浏览器 DevTools 控制台打印构建环境信息的 Vite 插件。页面加载时自动在浏览器控制台输出项目名称、构建环境、Node 版本、Git 分支和构建时间等信息。
+在浏览器 DevTools 控制台打印构建环境信息的 Vite 插件。页面加载时自动在浏览器控制台输出项目名称、项目版本、构建环境和构建时间等信息。
 
 ## 特性
 
 - `vite dev` 和 `vite build` 均可用，通过 `transformIndexHtml` 注入脚本
-- 自动读取项目根目录 `package.json` 中的项目名称
-- 自动获取当前 Git 分支
+- 自动读取项目根目录 `package.json` 中的项目名称与版本号
 - 每个信息项可独立开关
 - 使用 `console['log']` 输出，**即使构建工具配置了 `drop_console` 也不会被移除**
 - TypeScript 编写，提供完整类型声明
@@ -51,10 +50,9 @@ export default defineConfig({
 ```
 ========================================
   项目名称 : my-vite-app
+  项目版本 : 1.0.0
   构建环境 : production
   构建时间 : 2026/07/28 15:30:45
-  Node版本 : v20.10.0
-  Git 分支 : main
 ========================================
 ```
 
@@ -68,13 +66,12 @@ export default defineConfig({
 
 ### EnvInfoOptions
 
-| 参数              | 类型      | 默认值                              | 必填 | 说明                                           |
-| ----------------- | --------- | ----------------------------------- | ---- | ---------------------------------------------- |
-| `env`             | `string`  | `process.env.NODE_ENV \|\| 'unknown'` | 否   | 构建环境标识，如 `development`、`test`、`production` |
-| `projectName`     | `string`  | 自动读取 `package.json#name`         | 否   | 覆盖项目名称，不传则自动从 package.json 读取     |
-| `showBranch`      | `boolean` | `true`                              | 否   | 是否显示 Git 分支信息                           |
-| `showTime`        | `boolean` | `true`                              | 否   | 是否显示构建时间                                |
-| `showNodeVersion` | `boolean` | `true`                              | 否   | 是否显示 Node.js 版本                           |
+| 参数          | 类型     | 默认值                              | 必填 | 说明                                           |
+| ------------- | -------- | ----------------------------------- | ---- | ---------------------------------------------- |
+| `env`         | `string` | `process.env.NODE_ENV \|\| 'unknown'` | 否   | 构建环境标识，如 `development`、`test`、`production` |
+| `projectName` | `string` | 自动读取 `package.json#name`         | 否   | 覆盖项目名称，不传则自动从 package.json 读取     |
+| `version`     | `string` | 自动读取 `package.json#version`      | 否   | 覆盖项目版本，不传则自动从 package.json 读取     |
+| `showTime`    | `boolean` | `true`                              | 否   | 是否显示构建时间                                |
 
 ### 使用示例
 
@@ -89,9 +86,8 @@ export default defineConfig({
     vitePluginEnvInfo({
       env: 'staging',
       projectName: 'my-custom-app',
-      showBranch: true,
+      version: '2.0.0',
       showTime: true,
-      showNodeVersion: false,
     }),
   ],
 })
@@ -117,8 +113,7 @@ import vitePluginEnvInfo from '@li-labs/vite-plugin-env-info'
 export default defineConfig({
   plugins: [
     vitePluginEnvInfo({
-      showBranch: false,
-      showNodeVersion: false,
+      showTime: false,
     }),
   ],
 })

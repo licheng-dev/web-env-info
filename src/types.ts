@@ -1,15 +1,13 @@
 export interface EnvInfoOptions {
   env?: string
   projectName?: string
-  showBranch?: boolean
+  version?: string
   showTime?: boolean
-  showNodeVersion?: boolean
 }
 
 export interface EnvInfo {
   projectName: string
   env: string
+  version: string
   time: string
-  nodeVersion: string
-  branch: string | null
 }
