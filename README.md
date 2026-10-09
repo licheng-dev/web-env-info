@@ -1,11 +1,12 @@
 # @li-labs/vite-plugin-env-info
 
-在浏览器 DevTools 控制台打印构建环境信息的 Vite 插件。页面加载时自动在浏览器控制台输出项目名称、项目版本、构建环境和构建时间等信息。
+在浏览器 DevTools 控制台打印构建环境信息的 Vite 插件。页面加载时自动在浏览器控制台输出项目名称、项目版本、最近修复、构建环境和构建时间等信息。
 
 ## 特性
 
 - `vite dev` 和 `vite build` 均可用，通过 `transformIndexHtml` 注入脚本
 - 自动读取项目根目录 `package.json` 中的项目名称与版本号
+- 自动读取最近一次 Git 提交，展示"最近修复"内容
 - 每个信息项可独立开关
 - 使用 `console['log']` 输出，**即使构建工具配置了 `drop_console` 也不会被移除**
 - TypeScript 编写，提供完整类型声明
@@ -51,10 +52,13 @@ export default defineConfig({
 ========================================
   项目名称 : my-vite-app
   项目版本 : 1.0.0
+  最近修复 : b8416fd feat: 控制台输出项目版本号，移除 Node 版本与 Git 分支
   构建环境 : production
   构建时间 : 2026/07/28 15:30:45
 ========================================
 ```
+
+> `最近修复` 取值为最近一次 Git 提交的短哈希与提交信息；若当前目录不是 Git 仓库则自动省略该行。
 
 ## 防 drop_console 原理
 
@@ -71,7 +75,9 @@ export default defineConfig({
 | `env`         | `string` | `process.env.NODE_ENV \|\| 'unknown'` | 否   | 构建环境标识，如 `development`、`test`、`production` |
 | `projectName` | `string` | 自动读取 `package.json#name`         | 否   | 覆盖项目名称，不传则自动从 package.json 读取     |
 | `version`     | `string` | 自动读取 `package.json#version`      | 否   | 覆盖项目版本，不传则自动从 package.json 读取     |
+| `commit`      | `string` | 自动读取最近一次 Git 提交              | 否   | 覆盖"最近修复"内容，不传则自动从 Git 读取        |
 | `showTime`    | `boolean` | `true`                              | 否   | 是否显示构建时间                                |
+| `showCommit`  | `boolean` | `true`                              | 否   | 是否显示"最近修复"                              |
 
 ### 使用示例
 
@@ -87,7 +93,9 @@ export default defineConfig({
       env: 'staging',
       projectName: 'my-custom-app',
       version: '2.0.0',
+      commit: 'fix: 修复登录跳转异常',
       showTime: true,
+      showCommit: true,
     }),
   ],
 })

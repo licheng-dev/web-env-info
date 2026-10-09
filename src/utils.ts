@@ -1,3 +1,4 @@
+import { execSync } from 'child_process'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import type { EnvInfoOptions } from './types'
@@ -32,6 +33,21 @@ export function getBuildEnv(options: EnvInfoOptions, mode: string): string {
     return options.env
   }
   return mode
+}
+
+export function getRecentCommit(root: string, options: EnvInfoOptions): string {
+  if (options.commit) {
+    return options.commit
+  }
+  try {
+    return execSync('git log -1 --pretty=format:"%h %s"', {
+      cwd: root,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    }).trim()
+  } catch {
+    return ''
+  }
 }
 
 export function formatTime(): string {
